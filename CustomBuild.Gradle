@@ -1,0 +1,90 @@
+
+apply plugin: 'scala' //this could be java or groovy
+apply plugin: 'eclipse' //eclipse could be any 
+apply plugin: 'application'
+apply plugin: 'maven-publish'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.0.0-SNAPSHOT'
+sourceSets {
+  main {
+    scala { srcDir 'src/main/scala' }
+    resources { srcDir 'src/main/resources' }
+  }
+  test {
+    scala { srcDir 'src/test/scala' }
+    resources { srcDir 'src/test/resources' }
+  }
+}
+dependencies {
+  compile 'org.apache.commons:commons-math3:3.5'
+  compile 'org.scala-lang:scala-library:2.11.7'
+  //Test
+  testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+//application plugin wants you to set mainClassName and jvm args
+mainClassName = ""com.coolcompany.coolapp.Swag""
+applicationDefaultJvmArgs = ['-Dconf=conf/config.json',
+   '-Dlog4j.configuration=file:conf/log4j.xml',
+   '-Xmx3g',
+   '-Xms3g',
+   '-XX:MaxGCPauseMillis=100',
+   '-XX:+UseG1GC',
+   '-XX:+UseCompressedOops',
+   .....etc.]
+repositories {
+  maven {
+    credentials {
+      username nexusUsername
+      password nexusPassword
+    }
+    url myPublicUrl
+  }
+}
+publishing {
+  publications {
+    mavenJava(MavenPublication) { from components.java }
+  }
+  repositories {
+    maven {
+      credentials {
+        username nexusUsername
+        password nexusPassword
+      }
+      if(project.version.endsWith('-SNAPSHOT')) {
+        url mySnapshotUrl
+      } else {
+        url myReleaseUrl
+      }
+    }
+  }
+}
+task copyConf(type: Copy) {
+  from System.getProperty('user.dir') + ""/conf""
+  into ""$buildDir/conf""
+}
+task createConf {
+  def conf = file(""$buildDir/conf"")
+  outputs.dir conf
+  doLast {
+    conf.mkdirs()
+    copyConf.execute()
+  }
+}
+//here we copy application config into the distribution zip or tar
+//When we apply docker plugin this will be added to root path
+//so it will be extracted under the root directory of container
+//and we will have our config files under /conf in container
+distributions {
+  main {
+    contents {
+      from(createConf) { into ""/conf"" }
+    }
+  }
+}
+//just in case, this I find useful to add it makes my eclipse more stable with
+//eclipse STS plugin
+eclipse.project {
+  natures 'org.springsource.ide.eclipse.gradle.core.nature'
+}
+task wrapper(type: Wrapper) { gradleVersion = '2.10' }
