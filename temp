@@ -1,0 +1,60 @@
+CDX Services - Docker Gradlew Pipeline -
+
+
+
+The Current Setup of the Pipeline , has the following stages configured -  
+
+Code Base 
+	The responsibility of handling the application code base would be handled by the Application team.New features and bugs would be Handled using feature branches , bugfix branch. As soon as the code is pushed the pipeline would get triggered.
+
+
+SCM 
+
+		Source code management (SCM) is used to track modifications to a source code repository. SCM tracks a running history of changes to a code base and helps resolve conflicts when merging updates from multiple contributors. SCM is also synonymous with Version control.
+
+Git is a distributed version-control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files. Its goals include speed, data integrity, and support for distributed, non-linear workflows.
+
+
+SCM Used - Bit Bucket 
+
+Bitbucket is a web-based version control repository hosting service owned by Atlassian, for source code and development projects that use either Mercurial or Git revision control systems.
+
+
+
+ CI Tool - Jenkins 
+
+		Jenkins is a free and open source automation server. It helps automate the parts of software development related to building, testing, and deploying, facilitating continuous integration and continuous delivery. It is a server-based system that runs in servlet containers such as Apache Tomcat. 
+
+Currently , in Jenkins setup we are using a multi stage , multi-pipeline setup to keep our codes and build consolidated and help with fast the reliable releases of different versions.
+
+Dockerization -   Using Dockerfile
+
+
+Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries and configuration files; they can communicate with each other through well-defined channels.
+
+A Dockerfile is a text document that contains all the commands a user could call on the command line to assemble an image. Using docker build users can create an automated build that executes several command-line instructions in succession. This page describes the commands you can use in a Dockerfile.
+
+    5.	Application Build using Gradle wrapper -
+
+Gradle is an open-source build automation system that builds upon the concepts of Apache Ant and Apache Maven.
+
+ some benefits of using Gradle wrapper:
+Gradle wrapper standardizes a project on a specified Gradle version, and it leads to more reliable and robust builds.
+The Gradle wrapper provides the same Gradle version to different users, and the execution environment is as simple as changing the Wrapper definition.
+
+
+    6.  Image repository - AWS ECR 
+
+Amazon Elastic Container Registry (ECR) is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. Amazon ECR is integrated with Amazon Elastic Container Service (ECS), simplifying your development to production workflow.	
+
+.
+.	
+
+
+		
+
+
+
+
+
+
