@@ -16,4 +16,4 @@ sudo apt update -y && sudo apt full-upgrade -y
 
 #toexcute 
 
-wget -O - https://raw.githubusercontent.com/aneestalha/devops/master/bazel.sh | bash
+#wget -O - https://raw.githubusercontent.com/aneestalha/devops/master/bazel.sh | bash
