@@ -12,3 +12,8 @@ sudo apt update -y && sudo apt full-upgrade -y
 #wget -O -https://copr.fedorainfracloud.org/coprs/vbatts/bazel/repo/epel-7/vbatts-bazel-epel-7.repo
 #mv vbatts-bazel-epel-7.repo /etc/yum.repos.d/
 #yum install bazel3
+
+
+#toexcute 
+
+wget -O - https://raw.githubusercontent.com/aneestalha/devops/master/bazel.sh | bash
