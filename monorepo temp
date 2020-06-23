@@ -2,3 +2,105 @@
 echo $SVN_REVISION
 svn_last_successful_build_revision=`curl $JOB_URL'lastSuccessfulBuild/api/json' | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"changeSet"'"]["'"revisions"'"][0]["'"revision"'"]'`
 diff=`svn di -r$SVN_REVISION:$svn_last_successful_build_revision --summarize`
+
+
+#For sparse checkout
+
+# create a shallow clone,
+# with only 1 (since depth equals 1) latest commit in history
+git clone <URL> --no-checkout <directory> --depth 1
+
+
+
+
+
+**********************************
+**********************************
+#count number of branches
+git branch | wc -l
+
+#baseline for commits 
+git checkout master
+git rev-list --count HEAD ^<branch-name>
+
+#After ignoring merges
+git rev-list --no-merges --count HEAD <branch-name>
+
+#per user
+git shortlog -s -n --all | grep user
+
+#From a fixed date
+git rev-list HEAD --count --first-parent --since=2018-01-01
+
+#From a particular commit
+git rev-list abc0923f.. --count --first-parent
+
+#
+
+##########     Ignore Below Script for now - just for fun  ##########
+
+# Run production build before push
+echo "[INFO] run .git/hooks/pre-push"
+
+echo "[INFO] Check if only one commit"
+
+# file .git/hooks/pre-push
+currentBranch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+gitLog=$(git log --graph --abbrev-commit --decorate  --first-parent HEAD)
+
+commitCountOfCurrentBranch=0
+startCountCommit=""
+baseBranch=""
+
+while read -r line; do
+
+    # if git log line started with something like "* commit aaface7 (origin/BRANCH_NAME)" or "commit ae4f131 (HEAD -> BRANCH_NAME)"
+    # that means it's on our branch BRANCH_NAME
+
+    matchedCommitSubstring="$( [[ $line =~ \*[[:space:]]commit[[:space:]].*\((.*)\) ]] && echo ${BASH_REMATCH[1]} )"
+
+    if [[ ! -z ${matchedCommitSubstring} ]];then
+
+      if [[  $line =~ $currentBranch ]];then
+        startCountCommit="true"
+      else
+        startCountCommit=""
+
+        if [[ -z ${baseBranch} ]];then
+          baseBranch=$( [[ ${matchedCommitSubstring} =~ (.*)\, ]] && echo ${BASH_REMATCH[1]} || echo ${matchedCommitSubstring} )
+
+        fi
+
+      fi
+
+    fi
+
+
+    if [[ ! -z ${startCountCommit} && $line =~ ^\*[[:space:]]commit[[:space:]] ]];then
+      ((commitCountOfCurrentBranch++))
+    fi
+
+
+done <<< "$gitLog"
+
+if [[ -z ${baseBranch} ]];then
+
+  baseBranch="origin/master"
+
+else
+
+  baseBranch=$( [[ ${baseBranch} =~ ^(.*)\, ]] && echo ${BASH_REMATCH[1]} || echo ${baseBranch} )
+
+fi
+
+
+echo "[INFO] Current commit count of the branch ${currentBranch}:  ${commitCountOfCurrentBranch}"
+
+if [[ ${commitCountOfCurrentBranch} -gt 1 ]];then
+  echo "[ERROR] Only a commit per branch is allowed. Try run 'git rebase -i ${baseBranch}'"
+  exit 1
+fi
+For more analysis, please visit my blog
+
+share  improve 
