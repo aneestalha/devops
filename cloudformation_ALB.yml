@@ -1,6 +1,6 @@
 
 AWSTemplateFormatVersion: 2010-09-09
-Description: Creates a VPC and a ELB with a EC2 Target Group Associated
+Description: Creates a ELB(ALB) with aTarget Group Associated
 
 
 
